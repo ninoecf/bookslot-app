@@ -1,0 +1,376 @@
+<mxfile host="app.diagrams.net" agent="BookSlot" pages="4">
+  <diagram id="infra" name="1 · Infraestructura AWS">
+    <mxGraphModel dx="1178" dy="688" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t_infra" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=20;fontStyle=1;fontColor=#232F3E;" value="BookSlot — Arquitectura infraestructura AWS" vertex="1">
+          <mxGeometry height="40" width="1100" x="40" y="14" as="geometry" />
+        </mxCell>
+        <mxCell id="s_infra" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;fontStyle=0;fontColor=#5A6C86;" value="Todos los componentes son servicios gestionados con endpoint publico, y se protegen con IAM y con el token, no con subredes.&lt;br&gt;Nada corre de forma continua, asi que no hay nada que cobre por tiempo encendido." vertex="1">
+          <mxGeometry height="50" width="1200" x="40" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="usuario" parent="1" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.user;" value="Usuario&#xa;navegador" vertex="1">
+          <mxGeometry height="40" width="40" x="60" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="nube" parent="1" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_cloud;strokeColor=#232F3E;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#232F3E;dashed=0;" value="AWS Cloud" vertex="1">
+          <mxGeometry height="880" width="1260" x="180" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="region" parent="nube" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_region;strokeColor=#00A4A6;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=1;" value="eu-west-1" vertex="1">
+          <mxGeometry height="830" width="1200" x="30" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m_web" parent="region" style="fillColor=none;strokeColor=#7AA116;dashed=1;verticalAlign=top;fontStyle=0;whiteSpace=wrap;html=1;align=left;spacingLeft=6;fontColor=#248814;fontSize=12;" value="Entrega de la interfaz" vertex="1">
+          <mxGeometry height="210" width="320" x="30" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m_id" parent="region" style="fillColor=none;strokeColor=#DD344C;dashed=1;verticalAlign=top;fontStyle=0;whiteSpace=wrap;html=1;align=left;spacingLeft=6;fontColor=#DD344C;fontSize=12;" value="Identidad" vertex="1">
+          <mxGeometry height="210" width="230" x="380" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m_api" parent="region" style="fillColor=none;strokeColor=#E7157B;dashed=1;verticalAlign=top;fontStyle=0;whiteSpace=wrap;html=1;align=left;spacingLeft=6;fontColor=#E7157B;fontSize=12;" value="La API" vertex="1">
+          <mxGeometry height="210" width="500" x="640" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m_dat" parent="region" style="fillColor=none;strokeColor=#C925D1;dashed=1;verticalAlign=top;fontStyle=0;whiteSpace=wrap;html=1;align=left;spacingLeft=6;fontColor=#C925D1;fontSize=12;" value="Datos y aviso" vertex="1">
+          <mxGeometry height="200" width="500" x="640" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="m_obs" parent="region" style="fillColor=none;strokeColor=#545B64;dashed=1;verticalAlign=top;fontStyle=0;whiteSpace=wrap;html=1;align=left;spacingLeft=6;fontColor=#545B64;fontSize=12;" value="Observabilidad y control de coste" vertex="1">
+          <mxGeometry height="200" width="580" x="30" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="cf" parent="region" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudfront;" value="CloudFront&#xa;sirve la interfaz" vertex="1">
+          <mxGeometry height="40" width="40" x="70" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" parent="region" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" value="S3&#xa;bucket privado (OAC)" vertex="1">
+          <mxGeometry height="40" width="40" x="230" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="cog" parent="region" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;" value="Cognito&#xa;cliente publico" vertex="1">
+          <mxGeometry height="40" width="40" x="460" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="gw" parent="region" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" value="API Gateway HTTP API&#xa;authorizer JWT" vertex="1">
+          <mxGeometry height="40" width="40" x="700" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="fn" parent="region" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" value="Lambda bookslot-api&#xa;Node.js · arm64" vertex="1">
+          <mxGeometry height="40" width="40" x="950" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ddb" parent="region" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" value="DynamoDB&#xa;tabla unica + GSI1" vertex="1">
+          <mxGeometry height="40" width="40" x="950" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="sns" parent="region" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sns;" value="SNS&#xa;aviso de reserva" vertex="1">
+          <mxGeometry height="40" width="40" x="700" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="cw" parent="region" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch;" value="CloudWatch&#xa;logs · una alarma" vertex="1">
+          <mxGeometry height="40" width="40" x="150" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="bud" parent="region" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.budgets;" value="AWS Budgets&#xa;aviso de gasto" vertex="1">
+          <mxGeometry height="40" width="40" x="400" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="n_conc" parent="region" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#B45309;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=11;fontColor=#232F3E;" value="CONTROL DE CONCURRENCIA&#xa;&#xa;La reserva es UNA operacion: TransactWriteItems,&#xa;con tres condiciones que se cumplen todas o no se&#xa;escribe nada.&#xa;&#xa;1 · reserved_count &lt; capacity AND status = OPEN&#xa;      si no -&gt; 409 SLOT_SOLD_OUT o SLOT_BLOCKED&#xa;&#xa;2 · attribute_not_exists(SK)&#xa;      una reserva por usuario y franja, por la&#xa;      forma de la clave -&gt; 409 ALREADY_RESERVED&#xa;&#xa;3 · attribute_not_exists(PK) en la clave de&#xa;      idempotencia -&gt; mismo intento repetido: 200&#xa;      con la reserva original, no una nueva&#xa;&#xa;No es una comprobacion que el codigo haga y que un&#xa;fallo pueda saltarse: es la escritura la que no&#xa;ocurre." vertex="1">
+          <mxGeometry height="330" width="400" x="770" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="i10" edge="1" parent="region" source="n_conc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;dashed=1;endArrow=open;strokeColor=#B45309;" target="ddb" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i1" edge="1" parent="1" source="usuario" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" target="cf" value="1 · carga la interfaz">
+          <mxGeometry relative="1" x="-0.0247" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i2" edge="1" parent="1" source="cf" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" target="s3" value="OAC">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i3" edge="1" parent="1" source="usuario" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" target="cog" value="2 · registro y acceso&#xa;llamadas no firmadas">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i4" edge="1" parent="1" source="usuario" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" target="gw" value="3 · API con Bearer&#xa;+ Idempotency-Key">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i5" edge="1" parent="1" source="gw" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;dashed=1;endArrow=open;" target="cog" value="JWKS del emisor">
+          <mxGeometry relative="1" x="-0.2" y="-10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i6" edge="1" parent="1" source="gw" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" target="fn" value="invoca solo si&#xa;el token es valido">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i7" edge="1" parent="1" source="fn" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;strokeWidth=2;" target="ddb" value="Query · GetItem&lt;br&gt;TransactWriteItems&amp;nbsp;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(35, 47, 62), rgb(189, 199, 212));&quot;&gt;-&amp;gt; (Esta es la parte importante de la concurrencia)&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i8" edge="1" parent="1" source="fn" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;dashed=1;endArrow=open;" target="sns" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i9" edge="1" parent="1" source="fn" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;dashed=1;endArrow=open;" target="cw" value="">
+          <mxGeometry relative="1" x="0.1485" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="journey" name="2 · Camino de una reserva">
+    <mxGraphModel dx="1600" dy="1300" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t_journey" value="BookSlot — camino de una reserva" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="14" width="1100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s_journey" value="De abrir la pagina a tener (o no tener) la plaza. Los tres finales son los unicos posibles, y cada uno se corresponde con una de las condiciones de la transaccion." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;fontStyle=0;fontColor=#5A6C86;" vertex="1" parent="1">
+          <mxGeometry x="40" y="52" width="1200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="q1i" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudfront;" vertex="1" parent="1">
+          <mxGeometry x="100" y="140" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="q1" value="1 · El navegador carga la interfaz desde CloudFront&#xa;y lee la URL de la API de config.js" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;align=left;verticalAlign=middle;spacingLeft=12;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="170" y="130" width="520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="q2i" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;" vertex="1" parent="1">
+          <mxGeometry x="100" y="235" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="q2" value="2 · Registro y acceso contra Cognito, DESDE EL NAVEGADOR&#xa;llamadas no firmadas: la API no participa" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;align=left;verticalAlign=middle;spacingLeft=12;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="170" y="225" width="520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="q3i" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="100" y="330" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="q3" value="3 · GET /slots — ruta PUBLICA, sin token&#xa;una Query al indice: horarios y plazas juntos" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;align=left;verticalAlign=middle;spacingLeft=12;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="170" y="320" width="520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="q4i" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="100" y="425" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="q4" value="4 · POST /reservations con Bearer y una Idempotency-Key&#xa;la clave la genera la interfaz: una por intento" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;align=left;verticalAlign=middle;spacingLeft=12;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="170" y="415" width="520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="q5i" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="100" y="520" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="q5" value="5 · El authorizer valida el token&#xa;si no vale, 401 y la funcion NO se invoca" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;align=left;verticalAlign=middle;spacingLeft=12;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="170" y="510" width="520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="q6i" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="100" y="615" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="q6" value="6 · La funcion lee la franja (lectura consistente)&#xa;para dar 404 si no existe y copiar lo que necesita el aviso" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;align=left;verticalAlign=middle;spacingLeft=12;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="170" y="605" width="520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="q7i" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="100" y="715" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="q7" value="7 · TransactWriteItems&#xa;descontar la plaza · crear la reserva · marcar la clave&#xa;TODO O NADA" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#B45309;strokeWidth=2;align=left;verticalAlign=middle;spacingLeft=12;fontSize=12;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="170" y="700" width="520" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="qe_q1" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" edge="1" parent="1" source="q1" target="q2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qe_q2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" edge="1" parent="1" source="q2" target="q3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qe_q3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" edge="1" parent="1" source="q3" target="q4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qe_q4" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" edge="1" parent="1" source="q4" target="q5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qe_q5" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" edge="1" parent="1" source="q5" target="q6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="qe_q6" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" edge="1" parent="1" source="q6" target="q7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f1" value="201 Created&#xa;&#xa;La reserva es nueva. Devuelve la reserva y las&#xa;plazas que quedan." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7AA116;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="800" y="560" width="420" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" value="200 OK&#xa;&#xa;La clave de idempotencia ya existia: es el MISMO&#xa;intento repetido. Devuelve la reserva original.&#xa;Dice «ya la tenias», no «te he dado otra»." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="800" y="690" width="420" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="f3" value="409 Conflict&#xa;&#xa;SLOT_SOLD_OUT · no quedan plazas&#xa;SLOT_BLOCKED · la franja no admite reservas&#xa;ALREADY_RESERVED · ya tenia una en esa franja" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DD344C;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="800" y="830" width="420" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="fe1" value="se cumplen las tres" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;strokeColor=#7AA116;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="q7" target="f1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe2" value="falla la 3.a" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="q7" target="f2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe3" value="falla la 1.a o la 2.a" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;strokeColor=#DD344C;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="q7" target="f3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_pru" value="LAS PRUEBAS&#xa;&#xa;concurrency-test.sh lanza N peticiones que se&#xa;liberan a la vez con una barrera, todas sobre la&#xa;misma franja de M plazas.&#xa;&#xa;Lo que se exige: exactamente M respuestas 201 y&#xa;N-M respuestas 409, y reserved_count = M al&#xa;terminar. Ni una plaza de mas.&#xa;&#xa;idempotency-test.sh manda 20 peticiones con la&#xa;MISMA clave: 1 respuesta 201, 19 respuestas 200,&#xa;y una sola reserva en la tabla." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#B45309;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=11;fontColor=#232F3E;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="130" width="420" height="250" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="auth" name="3 · Identidad y autorizacion">
+    <mxGraphModel dx="1600" dy="1300" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="860" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t_auth" value="BookSlot — identidad y autorizacion" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="14" width="1100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s_auth" value="El reparto: EL GATEWAY AUTENTICA (¿es este token autentico y vigente?) Y LA FUNCION AUTORIZA (¿puede este usuario hacer esto?)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;fontStyle=0;fontColor=#5A6C86;" vertex="1" parent="1">
+          <mxGeometry x="40" y="52" width="1200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="v_nav" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="130" y="190" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="p_nav" value="Navegador&#xa;&#xa;SignUp · ConfirmSignUp · InitiateAuth&#xa;&#xa;Llamadas NO firmadas: el cliente de&#xa;Cognito es publico y no tiene secreto,&#xa;asi que no hace falta ninguna&#xa;credencial de AWS." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="60" y="250" width="320" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="v_cog" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;" vertex="1" parent="1">
+          <mxGeometry x="550" y="190" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="p_cog" value="Cognito User Pool&#xa;&#xa;Custodia las contrasenas y su politica.&#xa;Emite el JWT con las claims:&#xa;&#xa;    sub · el id del usuario&#xa;    email · name&#xa;    cognito:groups · p. ej. [admins]&#xa;    iss · aud · exp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DD344C;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="430" y="250" width="380" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="v_gw" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="220" y="500" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="p_gw" value="API Gateway · authorizer JWT nativo&#xa;&#xa;Comprueba, ANTES de invocar la funcion:&#xa;&#xa;    · la firma, contra el JWKS del emisor&#xa;    · el emisor (iss) y la audiencia (aud)&#xa;    · la caducidad (exp)&#xa;&#xa;Si algo falla -&gt; 401 y la funcion no se ejecuta.&#xa;Son cero lineas de codigo propio: no hay que&#xa;descargar claves, ni cachearlas, ni rotarlas." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E7157B;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="60" y="560" width="400" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="v_fn" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="700" y="500" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="p_fn" value="Lambda bookslot-api&#xa;&#xa;Recibe las claims ya validadas y decide:&#xa;&#xa;    · la identidad sale del token (sub), nunca&#xa;      de la URL ni del cuerpo&#xa;    · /admin/** exige el grupo admins, leido de&#xa;      cognito:groups&#xa;    · el resto opera solo sobre los datos del&#xa;      propio usuario&#xa;&#xa;El perfil se crea solo en la primera peticion&#xa;autenticada, leyendo sub, email y name del token." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#ED7100;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=12;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="540" y="560" width="420" height="232" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="usuario y contrasena" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="p_nav" target="p_cog">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="JWT" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;dashed=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="p_cog" target="p_nav">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="Authorization: Bearer &amp;lt;JWT&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="p_nav" target="p_gw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="descarga el JWKS (en cache)" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;dashed=1;endArrow=open;exitX=0.95;exitY=0;exitDx=0;exitDy=0;entryX=0.35;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="p_gw" target="p_cog">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" value="las claims, ya validadas" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#545B64;rounded=0;fontSize=11;fontColor=#232F3E;" edge="1" parent="1" source="p_gw" target="p_fn">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p_rutas" value="LAS RUTAS, POR NIVEL DE ACCESO&#xa;&#xa;PUBLICAS · declaradas sin authorizer&#xa;    GET /resources&#xa;    GET /resources/{resourceId}&#xa;    GET /slots&#xa;&#xa;AUTENTICADAS · exigen un token valido&#xa;    POST /reservations&#xa;    GET /reservations&#xa;    DELETE /reservations/{slotId}&#xa;    GET /me · PUT /me&#xa;&#xa;ADMIN · token valido + grupo admins&#xa;    POST /admin/resources&#xa;    POST /admin/slots" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=11;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="190" width="400" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="p_elim" value="LO QUE ESTE REPARTO ELIMINA&#xa;&#xa;· La funcion no necesita NI UN permiso de Cognito:&#xa;  no llama a SignUp, ni a InitiateAuth, ni a GetUser.&#xa;&#xa;· No hay validacion de JWKS escrita a mano, ni cache&#xa;  de claves, ni Spring Security.&#xa;&#xa;· No hay rutas /auth/*: el registro y el acceso no&#xa;  pasan por la API.&#xa;&#xa;· Una contrasena nunca llega al codigo propio." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7AA116;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=11;fontColor=#232F3E;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="540" width="400" height="240" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="tabla" name="4 · La tabla en DynamoDB">
+    <mxGraphModel dx="1600" dy="1300" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t_tabla" value="BookSlot — una sola tabla" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="14" width="1100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s_tabla" value="Cinco tipos de item conviven en la misma tabla. Solo se declaran los atributos que son CLAVE: fuera de ellas, DynamoDB no tiene esquema." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=12;fontStyle=0;fontColor=#5A6C86;" vertex="1" parent="1">
+          <mxGeometry x="40" y="52" width="1200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ic_ddb" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="60" y="110" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cab0" value="Item" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;strokeColor=#232F3E;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="110" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cab1" value="PK" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;strokeColor=#232F3E;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="110" width="240" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cab2" value="SK" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;strokeColor=#232F3E;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="110" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cab3" value="GSI1PK" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#5A2D6E;strokeColor=#5A2D6E;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="750" y="110" width="220" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cab4" value="GSI1SK" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#5A2D6E;strokeColor=#5A2D6E;fontColor=#FFFFFF;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="970" y="110" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="f0c0" value="Recurso" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6E8;strokeColor=#7AA116;fontSize=12;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="130" y="150" width="200" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f0c1" value="RESOURCE#&lt;rid&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7AA116;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="330" y="150" width="240" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f0c2" value="META" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7AA116;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="570" y="150" width="180" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f0c3" value="RESOURCES" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F2FA;strokeColor=#B7C0BD;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="750" y="150" width="220" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f0c4" value="&lt;name&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F2FA;strokeColor=#B7C0BD;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="970" y="150" width="200" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f1c0" value="Franja + aforo" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#B45309;fontSize=12;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="130" y="196" width="200" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f1c1" value="SLOT#&lt;sid&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#B45309;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="330" y="196" width="240" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f1c2" value="META" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#B45309;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="570" y="196" width="180" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f1c3" value="RESOURCE#&lt;rid&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F2FA;strokeColor=#B7C0BD;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="750" y="196" width="220" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f1c4" value="&lt;startsAt&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F2FA;strokeColor=#B7C0BD;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="970" y="196" width="200" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f2c0" value="Reserva" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FDF2FE;strokeColor=#C925D1;fontSize=12;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="130" y="242" width="200" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f2c1" value="SLOT#&lt;sid&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C925D1;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="330" y="242" width="240" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f2c2" value="RES#&lt;uid&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C925D1;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="570" y="242" width="180" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f2c3" value="USER#&lt;uid&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F2FA;strokeColor=#B7C0BD;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="750" y="242" width="220" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f2c4" value="&lt;createdAt&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F2FA;strokeColor=#B7C0BD;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="970" y="242" width="200" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f3c0" value="Perfil" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F4F5;strokeColor=#5A6C86;fontSize=12;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="130" y="288" width="200" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f3c1" value="USER#&lt;uid&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="330" y="288" width="240" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f3c2" value="PROFILE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="570" y="288" width="180" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f3c3" value="—" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F2FA;strokeColor=#B7C0BD;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="750" y="288" width="220" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f3c4" value="—" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F2FA;strokeColor=#B7C0BD;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="970" y="288" width="200" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f4c0" value="Idempotencia" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F4F5;strokeColor=#5A6C86;fontSize=12;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="130" y="334" width="200" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f4c1" value="IDEM#&lt;uid&gt;#&lt;key&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="330" y="334" width="240" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f4c2" value="IDEM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="570" y="334" width="180" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f4c3" value="— caduca por TTL" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F2FA;strokeColor=#B7C0BD;fontSize=11;fontFamily=Courier New;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="750" y="334" width="420" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="n_dec" value="LAS TRES DECISIONES DEL DISENO&#xa;&#xa;1 · LA FRANJA Y SU AFORO SON EL MISMO ITEM&#xa;    Un solo item lleva startsAt, endsAt, capacity y&#xa;    reserved_count. Consecuencia: GET /slots es UNA&#xa;    Query que devuelve horarios y plazas juntos.&#xa;    Antes eran dos tablas en dos modulos, y crear una&#xa;    franja exigia una transaccion entre las dos.&#xa;&#xa;2 · LA RESERVA SE IDENTIFICA POR (FRANJA, USUARIO)&#xa;    PK=SLOT#&lt;sid&gt;, SK=RES#&lt;uid&gt;. La regla «un usuario,&#xa;    una reserva por franja» deja de necesitar un&#xa;    indice unico: es la forma de la clave. No se puede&#xa;    violar.&#xa;&#xa;3 · LA RESERVA LLEVA COPIA DE LO QUE NECESITA EL AVISO&#xa;    resourceName, startsAt, endsAt, timezone y&#xa;    userEmail se copian dentro. Asi el notificador no&#xa;    consulta nada.&#xa;    El precio, anotado: si un administrador cambiara la&#xa;    hora de una franja ya reservada, las copias&#xa;    quedarian desfasadas. Ese caso no existe en el MVP." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A6C86;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=11;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="130" y="430" width="520" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="n_gsi" value="EL INDICE GSI1 · da la vuelta a la tabla&#xa;&#xa;Tres consultas que no pueden ir por la clave&#xa;principal, y por eso existe el indice:&#xa;&#xa;  GSI1PK = RESOURCES       -&gt; listar recursos,&#xa;                             ordenados por nombre&#xa;  GSI1PK = RESOURCE#&lt;rid&gt;  -&gt; franjas de un recurso,&#xa;                             ordenadas por hora&#xa;  GSI1PK = USER#&lt;uid&gt;      -&gt; reservas de un usuario&#xa;&#xa;Proyeccion ALL, porque GET /slots necesita el aforo:&#xa;con KEYS_ONLY habria que ir a buscar cada item a la&#xa;tabla base y volveria el N+1 que este diseno elimina.&#xa;&#xa;El indice es de consistencia EVENTUAL, y da igual: es&#xa;una vista que la interfaz refresca. La reserva va&#xa;contra la tabla base, con lectura consistente y&#xa;condicion atomica. La correccion no depende del indice.&#xa;&#xa;NI UN Scan EN TODO EL SISTEMA." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F7F2FA;strokeColor=#5A2D6E;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=11;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="690" y="430" width="480" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="n_pat" value="LOS PATRONES DE ACCESO, UNO POR UNO&#xa;&#xa;GET /resources&#xa;    Query GSI1 · GSI1PK = RESOURCES&#xa;&#xa;GET /resources/{id}&#xa;    GetItem&#xa;&#xa;GET /slots?resourceId=X&#xa;    Query GSI1 · GSI1PK = RESOURCE#X&#xa;    y GSI1SK &gt;= ahora -&gt; 1 consulta, CON el aforo&#xa;&#xa;POST /reservations&#xa;    GetItem de la franja + TransactWriteItems&#xa;&#xa;GET /reservations&#xa;    Query GSI1 · GSI1PK = USER#&lt;uid&gt;&#xa;&#xa;DELETE /reservations/{slotId}&#xa;    TransactWriteItems (2 items)&#xa;&#xa;GET · PUT /me&#xa;    GetItem · UpdateItem&#xa;&#xa;POST /admin/resources&#xa;    PutItem&#xa;&#xa;POST /admin/slots&#xa;    GetItem del recurso + PutItem" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#B7C0BD;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=11;fontColor=#232F3E;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1210" y="110" width="372" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="n_tx" value="LA TRANSACCION&#xa;&#xa;TransactWriteItems([&#xa;&#xa;  Update  SLOT#&lt;sid&gt; / META&#xa;          SET reserved_count = reserved_count + 1&#xa;          IF  attribute_exists(PK)&#xa;          AND status = OPEN&#xa;          AND reserved_count &lt; capacity&#xa;&#xa;  Put     SLOT#&lt;sid&gt; / RES#&lt;uid&gt;&#xa;          IF  attribute_not_exists(SK)&#xa;&#xa;  Put     IDEM#&lt;uid&gt;#&lt;key&gt; / IDEM&#xa;          IF  attribute_not_exists(PK)&#xa;])&#xa;&#xa;CancellationReasons llega en el MISMO orden, asi&#xa;que el indice dice que condicion fallo." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#B45309;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=11;fontColor=#232F3E;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1210" y="620" width="372" height="312" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
