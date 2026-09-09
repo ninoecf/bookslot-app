@@ -1,0 +1,132 @@
+{
+	"Name": "Bookslot-estimate",
+	"Total Cost": {
+		"monthly": "0.50",
+		"upfront": "0.00",
+		"12 months": "6.00"
+	},
+	"Metadata": {
+		"Currency": "USD",
+		"Locale": "en_US",
+		"Created On": "9/9/2026",
+		"Legal Disclaimer": "AWS Pricing Calculator provides only an estimate of your AWS fees and doesn't include any taxes that might apply. Your actual fees depend on a variety of factors, including your actual usage of AWS services.",
+		"Share Url": "https://calculator.aws/#/estimate?nc2=h_pr_calc&id=8d61893c34d64afffaa53e627ccf56d42092be10"
+	},
+	"Groups": {
+		"Services": [
+			{
+				"Service Name": "Amazon API Gateway",
+				"Region": "Europe (Ireland)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.04",
+					"upfront": "0.00",
+					"12 months": "0.52"
+				},
+				"Properties": {
+					"HTTP API requests units": "exact number",
+					"Average size of each request": "2 KB",
+					"REST API request units": "millions",
+					"Cache memory size (GB)": "None",
+					"WebSocket message units": "thousands",
+					"Average message size": "32 KB",
+					"Requests": "39000 per month"
+				}
+			},
+			{
+				"Service Name": "AWS Lambda",
+				"Region": "Europe (Ireland)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.00",
+					"upfront": "0.00",
+					"12 months": "0.00"
+				},
+				"Properties": {
+					"Invoke Mode": "Buffered",
+					"Architecture": "x86",
+					"Number of requests": "40000 per month",
+					"Amount of ephemeral storage allocated": "512 MB"
+				}
+			},
+			{
+				"Service Name": "DynamoDB on-demand capacity",
+				"Region": "Europe (Ireland)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.03",
+					"upfront": "0.00",
+					"12 months": "0.36"
+				},
+				"Properties": {
+					"Table class": "Standard",
+					"Average item size (all attributes)": "1 KB",
+					"Data storage size": "0.1 GB"
+				}
+			},
+			{
+				"Service Name": "S3 Standard",
+				"Region": "Europe (Ireland)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.00",
+					"upfront": "0.00",
+					"12 months": "0.00"
+				},
+				"Properties": {
+					"S3 Standard storage": "0.1 GB per month",
+					"PUT, COPY, POST, LIST requests to S3 Standard": "100",
+					"GET, SELECT, and all other requests from S3 Standard": "500"
+				}
+			},
+			{
+				"Service Name": "Amazon Cognito",
+				"Region": "Europe (Ireland)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.00",
+					"upfront": "0.00",
+					"12 months": "0.00"
+				},
+				"Properties": {
+					"Optimization Rate for Token Requests": "0",
+					"Optimization Rate for App Clients": "0",
+					"Number of monthly active users (MAU)": "500",
+					"Advanced security features": "Disabled"
+				}
+			},
+			{
+				"Service Name": "Amazon CloudWatch",
+				"Region": "Europe (Ireland)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.43",
+					"upfront": "0.00",
+					"12 months": "5.13"
+				},
+				"Properties": {
+					"Number of mobile OTEL events and spans or spans per visit": "70",
+					"Mobile sampling rate": "1",
+					"Standard Logs: Data Ingested": "0.03 GB",
+					"Number of Standard Resolution Alarm Metrics": "4",
+					"Number of Dashboards": "1",
+					"GetMetricData: Number of metrics requested": "1000"
+				}
+			},
+			{
+				"Service Name": "Standard topics",
+				"Region": "Europe (Ireland)",
+				"Status": "",
+				"Service Cost": {
+					"monthly": "0.00",
+					"upfront": "0.00",
+					"12 months": "0.00"
+				},
+				"Properties": {
+					"EMAIL/EMAIL-JSON Notifications": "1000 per month",
+					"Requests": "1000 per month"
+				}
+			}
+		]
+	}
+}
