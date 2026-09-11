@@ -7,6 +7,9 @@
 //
 // SNS puede entregar varios mensajes en un mismo evento, por eso
 // event.Records es un array.
+//
+// SIMULA el envio del correo: escribe en el log lo que SES habria enviado.
+// El rol de esta cuenta no tiene ninguna accion ses:*.
 
 export const handler = async (event) => {
   console.log('Mensajes recibidos:', event.Records.length);
@@ -34,8 +37,18 @@ export const handler = async (event) => {
 
     switch (payload.event) {
       case 'USER_REGISTERED':
-        // Aqui iria el trabajo real
-        console.log(`Evento procesado con exito: alta de ${payload.name} (${payload.email})`);
+      case 'RESERVATION_CONFIRMED':
+      case 'RESERVATION_CANCELLED':
+        // Aqui iria el SendEmailCommand de SES.
+        console.log([
+          '───────── CORREO SIMULADO ─────────',
+          `Para:    ${payload.email}`,
+          `Asunto:  ${payload.subject ?? Subject}`,
+          '',
+          payload.body,
+          '───────────────────────────────────',
+        ].join('\n'));
+        console.log(`Evento procesado con exito: ${payload.event} para ${payload.email}`);
         break;
 
       default:
