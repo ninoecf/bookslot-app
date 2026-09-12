@@ -1,0 +1,23 @@
+# --- Terraform --------------------------------------------------------------
+# .terraform.lock.hcl NO se ignora: fija el hash del provider y es lo que hace que el despliegue sea reproducible.
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Los ficheros de plan llevan dentro los valores de las variables, el correo de alarmas incluido.
+*.tfplan
+
+# El correo de alarmas es propio de cada cuenta.
+*.tfvars
+!example.tfvars
+
+# Los zips de las Lambdas, que genera `apply`.
+infra/build/
+
+# --- Pruebas ----------------------------------------------------------------
+# Aqui caen los tokens de los usuarios de prueba y los ids de la ultima ejecucion. Los tokens son credenciales: no van al repositorio.
+scripts/out/
+
+# --- Interfaz ---------------------------------------------------------------
+# config.js lo genera el pipeline con los outputs de Terraform. En local se copia de config.example.js.
+web/config.js
