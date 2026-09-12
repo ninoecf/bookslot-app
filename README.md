@@ -131,13 +131,13 @@ Se comprueba a dos alturas:
 
 ## 4. Seguridad y operación
  
-**IAM con mínimo privilegio.** Al utilizar serverless se configuran los recursos con los roles de la academia, y se configura de forma que los recursos no tienen permisos ilimitados, ni nos encontramos con "*" en los servicios.
+**IAM con mínimo privilegio.** Cada Lambda tiene su propio rol, escrito en [`infra/iam.tf`](infra/iam.tf) y sin ninguna política gestionada: la API puede leer y escribir en su tabla y en su índice, publicar en su topic y escribir en su grupo de logs, y nada más; la notificadora solo escribe en el suyo. Ni un `"*"` en los recursos.
  
 **Secretos fuera del código: no hay ninguno.** Los clientes se almacenan con Cognito, y los pipelines no almacenan claves de AWS.
  
 **HTTPS.** Los dos puntos expuestos, CloudFront y el endpoint de API Gateway, solo aceptan HTTPS. El *bucket* no es accesible directamente: solo CloudFront, por OAC.
  
-**CI/CD.** `ci.yml` corre en cada push y pull request las pruebas de la función, `terraform fmt -check`, `terraform validate` y la sintaxis de la interfaz, **sin ningún acceso a AWS**. `deploy.yml` despliega en push a `main` desde un **runner autoalojado**, sin claves almacenadas: `terraform apply`, generar `config.js` con los *outputs*, subir la interfaz e invalidar la caché.
+**CI/CD.** `ci.yml` corre en cada push y pull request las pruebas de la función, `terraform fmt -check`, `terraform validate` y la sintaxis de la interfaz, **sin ningún acceso a AWS**. `deploy.yml` despliega en push a `main` autenticándose por **OIDC**, sin ninguna clave guardada en el repositorio: `terraform apply`, generar `config.js` con los *outputs*, subir la interfaz e invalidar la caché.
  
 **Alarmas.** Las alarmas se publican en un topic de SNS **suscrito a un correo**. Se evalúan los errores de la función, sus frenadas por límite de concurrencia y los 5xx del gateway.
  
@@ -145,23 +145,13 @@ Se comprueba a dos alturas:
  
 ---
 
-## 5. Instrucciones de despliegue
+## 5. Despliegue
 
-**Requisitos:** AWS CLI v2, Terraform ≥ 1.10, `jq` y `uuidgen`, y credenciales de AWS con permisos sobre la cuenta.
+### 5.1 Despliegue manual
 
-**Linux (Debian/Ubuntu)**
+#### 5.1.1 Preparación
 
-```bash
-sudo apt install jq uuid-runtime   
-```
-
-**MacOs**
-
-```bash
-brew install jq                    
-```
-
-### 0. Preparación
+**Requisitos:** AWS CLI v2, Terraform ≥ 1.10 y credenciales de AWS con permisos sobre la cuenta.
 
 ```bash
 git clone https://github.com/ninoecf/bookslot-app.git
@@ -178,15 +168,17 @@ aws configure get region
 
 Todos los comandos parten de la raíz del repositorio y se ejecutan en la misma terminal.
 
-### 1. El bucket del estado
+#### 5.1.2 El bucket del estado
 
 ```bash
-./scripts/create-bucket-4-tfstate.sh bookslot-tfstate eu-west-1
+BUCKET="bookslot-tfstate-$(aws sts get-caller-identity --query Account --output text)"
+
+./scripts/create-bucket-4-tfstate.sh "$BUCKET" eu-west-1
 ```
 
-Si el nombre está ocupado, elige otro y cámbialo en el bloque `backend` de `infra/provider.tf`.
+`$BUCKET` se vuelve a usar en 5.1.4 y en la sección 7.
 
-### 2. Las variables
+#### 5.1.3 Las variables
 
 ```bash
 cd infra
@@ -195,16 +187,16 @@ cp example.tfvars terraform.tfvars
 
 Edita `terraform.tfvars` y pon tu dirección en `alert_email`. Ahí llegarán las alarmas y los avisos de presupuesto.
 
-### 3. Levantar la infraestructura
+#### 5.1.4 Levantar la infraestructura
 
 ```bash
-terraform init
+terraform init -backend-config="bucket=$BUCKET"
 terraform apply
 ```
 
 Son 34 recursos y tarda unos minutos. Al terminar, confirma la suscripción a las alarmas desde el correo que envía AWS.
 
-### 4. Publicar la interfaz
+#### 5.1.5 Publicar la interfaz
 
 ```bash
 cat > ../web/config.js <<EOF
@@ -229,10 +221,58 @@ aws cloudfront create-invalidation \
     --paths "/*"
 ```
 
-### 5. El primer administrador
+### 5.2 Despliegue automático
+
+`deploy.yml` repite 5.1.4 y 5.1.5 en cada push a `main`, autenticándose por **OIDC** con credenciales temporales. No hay ninguna clave de AWS en el repositorio.
+
+#### 5.2.1 Conectar GitHub con AWS
+
+**Requisitos:** AWS CLI v2 con credenciales que tengan permisos de IAM, y la CLI de GitHub (`gh`) autenticada con `gh auth login`.
 
 ```bash
-POOL=$(terraform output -raw cognito_user_pool_id)
+./scripts/connect-github-aws.sh ninoecf/bookslot-app tu-correo@ejemplo.com
+```
+
+Se lanza una sola vez. En AWS crea el bucket del estado, el proveedor OIDC y el rol que asume el workflow; en GitHub guarda los secretos `AWS_DEPLOY_ROLE_ARN` y `ALERT_EMAIL`.
+
+La *trust policy* del rol queda atada a `repo:<owner/repo>:ref:refs/heads/main`.
+
+#### 5.2.2 Lanzar el workflow
+
+Desde **Actions → Deploy → Run workflow**, o haciendo cualquier push a `main`.
+
+Al terminar, el resumen del job trae la URL de la aplicación y la de la API.
+
+La aplicación queda en pie sin ningún administrador. Lo crea 6.1.
+
+`ci.yml` es independiente y no toca AWS: corre en runners de GitHub la sintaxis de las funciones y de la interfaz, `terraform fmt -check` y `terraform validate` con `-backend=false`.
+
+---
+
+## 6. Pruebas
+
+**Requisitos añadidos:** `jq` y `uuidgen`, que usan los scripts.
+
+**Linux (Debian/Ubuntu)**
+
+```bash
+sudo apt install jq uuid-runtime
+```
+
+**macOS**
+
+```bash
+brew install jq
+```
+
+### 6.1 El primer administrador
+
+Se crea desde fuera de la aplicación, con credenciales de AWS:
+
+```bash
+POOL=$(aws cognito-idp list-user-pools --max-results 60 \
+    --query "UserPools[?Name=='bookslot-dev'].Id | [0]" --output text)
+
 EMAIL="admin@ejemplo.com"
 CLAVE="BookSlot2026"
 
@@ -247,21 +287,25 @@ aws cognito-idp admin-add-user-to-group \
     --user-pool-id "$POOL" --username "$EMAIL" --group-name admins
 ```
 
-### 6. Reproducir las pruebas
+Con ese correo y esa contraseña ya se puede entrar en la aplicación, y aparece el menú **Admin**.
+
+### 6.2 Reproducir las pruebas
+
+Las dos van contra el despliegue real y usan el administrador de 6.1. Desde la raíz del repositorio:
 
 ```bash
-cd ..
-
 ./scripts/test/seed-users.sh 10
 
 ./scripts/test/seed.sh "$EMAIL" "$CLAVE" 3 120
 ./scripts/test/idempotency-test.sh
 
 ./scripts/test/seed.sh "$EMAIL" "$CLAVE" 3 120
-./scripts/test/concurrency-test.sh 8
+./scripts/test/concurrency-test.sh 30
 ```
 
-La salida se guarda en [`docs/evidencias/`](docs/evidencias/). La cuenta limita las ejecuciones simultáneas de Lambda a 10, de ahí las 8 peticiones.
+Treinta peticiones simultáneas sobre una franja de tres plazas. La salida se guarda en [`docs/evidencias/`](docs/evidencias/).
+
+Si el cupo de ejecuciones simultáneas de Lambda de la cuenta está por debajo de esa cifra, el script avisa: por encima del cupo, API Gateway devuelve `503` sin que la transacción llegue a verlas.
 
 El correo de confirmación de reserva se simula en el log de la notificadora:
 
@@ -269,28 +313,9 @@ El correo de confirmación de reserva se simula en el log de la notificadora:
 aws logs tail /aws/lambda/bookslot-dev-notifier --since 10m
 ```
 
-### 7. Despliegue automático
-
-`deploy.yml` repite los pasos 3 y 4 en cada push a `main`, sobre un runner autoalojado. Registro desde **Settings → Actions → Runners → New self-hosted runner**, que da la URL del paquete y un token válido durante una hora:
-
-```bash
-mkdir -p ~/actions-runner && cd ~/actions-runner
-
-curl -o actions-runner.tar.gz -L \
-  https://github.com/actions/runner/releases/download/v2.328.0/actions-runner-linux-x64-2.328.0.tar.gz
-tar xzf actions-runner.tar.gz
-
-./config.sh --url https://github.com/ninoecf/bookslot-app --token <TOKEN>
-./run.sh
-```
-
-El job usa las credenciales de AWS de esa máquina.
-
-`ci.yml` corre en runners de GitHub y no accede a AWS: sintaxis de las funciones y de la interfaz, `terraform fmt -check` y `terraform validate`.
-
 ---
 
-## 6. Instrucciones de destrucción
+## 7. Destrucción
 
 ```bash
 cd infra
@@ -304,15 +329,17 @@ terraform destroy
 El bucket del estado. Tiene versionado, así que hay que borrar las versiones antes que el bucket:
 
 ```bash
-aws s3api delete-objects --bucket bookslot-tfstate --delete "$(
-    aws s3api list-object-versions --bucket bookslot-tfstate --output json \
+BUCKET="bookslot-tfstate-$(aws sts get-caller-identity --query Account --output text)"
+
+aws s3api delete-objects --bucket "$BUCKET" --delete "$(
+    aws s3api list-object-versions --bucket "$BUCKET" --output json \
         --query '{Objects: Versions[].{Key:Key,VersionId:VersionId}}')"
 
-aws s3api delete-objects --bucket bookslot-tfstate --delete "$(
-    aws s3api list-object-versions --bucket bookslot-tfstate --output json \
+aws s3api delete-objects --bucket "$BUCKET" --delete "$(
+    aws s3api list-object-versions --bucket "$BUCKET" --output json \
         --query '{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}')" 2>/dev/null || true
 
-aws s3api delete-bucket --bucket bookslot-tfstate --region eu-west-1
+aws s3api delete-bucket --bucket "$BUCKET" --region eu-west-1
 ```
 
 Los grupos de logs, que crea Lambda en la primera invocación:
@@ -334,7 +361,7 @@ aws logs describe-log-groups --log-group-name-prefix /aws/lambda/bookslot \
 
 ---
 
-## 7. Coste mensual estimado
+## 8. Coste mensual estimado
 
 Sin nada encendido por horas, el gasto depende del uso. Con el de este proyecto —despliegues, pruebas y una demostración— las líneas quedan así:
 

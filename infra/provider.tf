@@ -12,9 +12,11 @@ terraform {
     }
   }
 
-  # El bucket lo crea scripts/create-bucket-4-tfstate.sh.
+  # El bucket lo crea scripts/create-bucket-4-tfstate.sh. Su nombre lleva el id
+  # de cuenta, que no se puede interpolar dentro de un bloque backend, así que
+  # se pasa en el init:
+  #   terraform init -backend-config="bucket=$BUCKET"
   backend "s3" {
-    bucket       = "bookslot-tfstate"
     key          = "bookslot/terraform.tfstate"
     region       = "eu-west-1"
     encrypt      = true

@@ -1,6 +1,6 @@
 # --- Avisos de reserva ------------------------------------------------------
 # La API publica aquí y ahí se acaba su responsabilidad. Quien lo consume es la
-# notificadora, que simula el envío del correo en su log: el rol de esta cuenta no tiene ninguna acción ses:*.
+# notificadora, que simula el envío del correo escribiéndolo en su log.
 
 resource "aws_sns_topic" "events" {
   name = "${local.name}-events"

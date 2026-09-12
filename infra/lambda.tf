@@ -1,5 +1,5 @@
 # --- Funciones Lambda -------------------------------------------------------
-# El rol que necesitan estas funciones está definido en iam.tf
+# El rol de cada función está definido en iam.tf
 
 data "archive_file" "api" {
   type        = "zip"
@@ -16,7 +16,7 @@ data "archive_file" "notifier" {
 resource "aws_lambda_function" "api" {
   filename         = data.archive_file.api.output_path
   function_name    = "${local.name}-api"
-  role             = data.aws_iam_role.lambda_exec.arn
+  role             = aws_iam_role.api.arn
   source_code_hash = data.archive_file.api.output_base64sha256
   runtime          = "nodejs24.x"
   handler          = "index.handler"
@@ -36,7 +36,7 @@ resource "aws_lambda_function" "api" {
 resource "aws_lambda_function" "notifier" {
   filename         = data.archive_file.notifier.output_path
   function_name    = "${local.name}-notifier"
-  role             = data.aws_iam_role.lambda_exec.arn
+  role             = aws_iam_role.notifier.arn
   source_code_hash = data.archive_file.notifier.output_base64sha256
   runtime          = "nodejs24.x"
   handler          = "index.handler"

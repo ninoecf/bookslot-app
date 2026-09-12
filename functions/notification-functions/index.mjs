@@ -9,7 +9,6 @@
 // event.Records es un array.
 //
 // SIMULA el envio del correo: escribe en el log lo que SES habria enviado.
-// El rol de esta cuenta no tiene ninguna accion ses:*.
 
 export const handler = async (event) => {
   console.log('Mensajes recibidos:', event.Records.length);
