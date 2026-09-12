@@ -21,12 +21,12 @@ Un administrador publica **recursos** (una sala, una clase, una mesa) y, para ca
 - Reintentar la misma petición de reserva no crea una segunda: el cliente envía una cabecera `Idempotency-Key` y una repetición devuelve la reserva original.
 - Cancelar libera la plaza inmediatamente.
 
-**Dos perfiles:**
+**Tres perfiles:**
 
 | Perfil | Puede |
 |---|---|
 | Visitante | Consultar recursos y franjas con su disponibilidad |
-| Usuario registrado | Reservar, ver sus reservas, cancelar, editar su perfil |
+| Usuario registrado | Reservar, ver sus reservas y cancelar |
 | Administrador | Todo lo anterior, más crear recursos y franjas |
 
 La interfaz es una única aplicación web con los dos paneles —usuario y administración— y navegación por rutas *hash*.
@@ -35,7 +35,7 @@ La interfaz es una única aplicación web con los dos paneles —usuario y admin
 
 ## 2. Arquitectura
 
-![Arquitectura de BookSlot](docs/diagrams/diagram.svg)
+![Arquitectura de BookSlot](docs/diagrams/diagram.jpg)
 
 | Componente | Servicio | Función |
 |---|---|---|
@@ -45,8 +45,8 @@ La interfaz es una única aplicación web con los dos paneles —usuario y admin
 | Lógica | AWS Lambda (Node.js, arm64) | Un fichero, sin dependencias y sin paso de compilación |
 | Datos | Amazon DynamoDB | Una sola tabla con un índice global; aquí se decide la plaza |
 | Copias de seguridad | PITR de DynamoDB | 35 días con granularidad de segundo |
-| Aviso de reserva | SNS con filtro por suscripción | Correo al cliente al confirmar y al cancelar (si sumla en el log de cloudwatch, lo ejecuta una lambda ya que no se puede utilizar Amazon SES por reestricciones de cuenta) |
-| Observabilidad y coste | CloudWatch + AWS Budgets | Logs, métricas, **cuatro alarmas** y control de gasto |
+| Aviso de reserva | SNS + Lambda notificadora | Correo al cliente al confirmar y al cancelar (se simula en el log de CloudWatch, lo ejecuta una lambda ya que no se puede utilizar Amazon SES por restricciones de cuenta) |
+| Observabilidad y coste | CloudWatch + AWS Budgets | Logs, métricas, **tres alarmas** y control de gasto |
 
 ### API Gateway
  
@@ -56,8 +56,8 @@ Las rutas se declaran una a una y no con un comodín `$default`, porque el autho
  
 | Ruta | Acceso |
 |---|---|
-| `GET /resources` · `GET /resources/{resourceId}` · `GET /slots` | Público |
-| `POST` · `GET /reservations` · `DELETE /reservations/{slotId}` · `GET` · `PUT /me` | Token válido |
+| `POST /register` · `GET /resources` · `GET /resources/{resourceId}` · `GET /slots` | Público |
+| `POST` · `GET /reservations` · `DELETE /reservations/{slotId}` | Token válido |
 | `POST /admin/resources` · `POST /admin/slots` | Token válido + grupo `admins` |
  
 El gateway autentica; que el usuario sea administrador lo decide la función leyendo `cognito:groups`.
@@ -71,7 +71,6 @@ Una sola tabla, `bookslot`, con un índice global. Modo **on-demand** (no hay ca
 | **Recurso** | `RESOURCE#<rid>` | `META` | `RESOURCES` | `<name>` |
 | **Franja + aforo** | `SLOT#<sid>` | `META` | `RESOURCE#<rid>` | `<startsAt>` |
 | **Reserva** | `SLOT#<sid>` | `RES#<uid>` | `USER#<uid>` | `<createdAt>` |
-| **Perfil** | `USER#<uid>` | `PROFILE` | — | — |
 | **Idempotencia** | `IDEM#<uid>#<key>` | `IDEM` | — | — |
 
 
@@ -125,8 +124,8 @@ Se comprueba a dos alturas:
 
 | Prueba | Qué demuestra |
 |---|---|
-| `scripts/concurrency-test.sh` | N reservas simultáneas por HTTPS contra el despliegue real |
-| `scripts/idempotency-test.sh` | 20 peticiones con la misma clave producen una sola reserva |
+| `scripts/test/concurrency-test.sh` | N reservas simultáneas por HTTPS contra el despliegue real |
+| `scripts/test/idempotency-test.sh` | 20 peticiones con la misma clave producen una sola reserva |
 
 ---
 
@@ -138,25 +137,204 @@ Se comprueba a dos alturas:
  
 **HTTPS.** Los dos puntos expuestos, CloudFront y el endpoint de API Gateway, solo aceptan HTTPS. El *bucket* no es accesible directamente: solo CloudFront, por OAC.
  
-**CI/CD.** `ci.yml` corre en cada push y pull request las pruebas de la función, `terraform fmt -check`, `terraform validate` y la sintaxis de la interfaz, **sin ningún acceso a AWS**. `deploy.yml` despliega en push a `main` por **OIDC**, sin claves almacenadas: `terraform apply`, generar `config.js` con los *outputs*, subir la interfaz e invalidar la caché.
+**CI/CD.** `ci.yml` corre en cada push y pull request las pruebas de la función, `terraform fmt -check`, `terraform validate` y la sintaxis de la interfaz, **sin ningún acceso a AWS**. `deploy.yml` despliega en push a `main` desde un **runner autoalojado**, sin claves almacenadas: `terraform apply`, generar `config.js` con los *outputs*, subir la interfaz e invalidar la caché.
  
-**Alarmas.** Las alarmas se publican en un topic de SNS **suscrito a un correo**. Se evaluan los errores 5xx.
+**Alarmas.** Las alarmas se publican en un topic de SNS **suscrito a un correo**. Se evalúan los errores de la función, sus frenadas por límite de concurrencia y los 5xx del gateway.
  
 **FinOps.** Los tags `Project`, `Environment` y `Owner` los aplica el provider con `default_tags`. **AWS Budgets** avisa por correo al superar el presupuesto mensual configurado.
  
 ---
 
-## 4. Instrucciones de despliegue
+## 5. Instrucciones de despliegue
 
+**Requisitos:** AWS CLI v2, Terraform ≥ 1.10, `jq` y `uuidgen`, y credenciales de AWS con permisos sobre la cuenta.
+
+**Linux (Debian/Ubuntu)**
+
+```bash
+sudo apt install jq uuid-runtime   
+```
+
+**MacOs**
+
+```bash
+brew install jq                    
+```
+
+### 0. Preparación
+
+```bash
+git clone https://github.com/ninoecf/bookslot-app.git
+cd bookslot-app
+chmod +x scripts/*.sh scripts/test/*.sh
+```
+
+Configura tus credenciales de AWS y comprueba la cuenta y la región:
+
+```bash
+aws sts get-caller-identity
+aws configure get region
+```
+
+Todos los comandos parten de la raíz del repositorio y se ejecutan en la misma terminal.
+
+### 1. El bucket del estado
+
+```bash
+./scripts/create-bucket-4-tfstate.sh bookslot-tfstate eu-west-1
+```
+
+Si el nombre está ocupado, elige otro y cámbialo en el bloque `backend` de `infra/provider.tf`.
+
+### 2. Las variables
+
+```bash
+cd infra
+cp example.tfvars terraform.tfvars
+```
+
+Edita `terraform.tfvars` y pon tu dirección en `alert_email`. Ahí llegarán las alarmas y los avisos de presupuesto.
+
+### 3. Levantar la infraestructura
+
+```bash
+terraform init
+terraform apply
+```
+
+Son 34 recursos y tarda unos minutos. Al terminar, confirma la suscripción a las alarmas desde el correo que envía AWS.
+
+### 4. Publicar la interfaz
+
+```bash
+cat > ../web/config.js <<EOF
+window.BOOKSLOT_CONFIG = {
+  apiBaseUrl: "$(terraform output -raw api_invoke_url)",
+  userPoolId: "$(terraform output -raw cognito_user_pool_id)",
+  clientId: "$(terraform output -raw cognito_client_id)"
+};
+EOF
+
+aws s3 sync ../web/ "s3://$(terraform output -raw web_bucket_name)/" \
+    --delete --exclude "config.example.js"
+
+terraform output -raw web_url; echo
+```
+
+En despliegues posteriores:
+
+```bash
+aws cloudfront create-invalidation \
+    --distribution-id "$(terraform output -raw cloudfront_distribution_id)" \
+    --paths "/*"
+```
+
+### 5. El primer administrador
+
+```bash
+POOL=$(terraform output -raw cognito_user_pool_id)
+EMAIL="admin@ejemplo.com"
+CLAVE="BookSlot2026"
+
+aws cognito-idp admin-create-user \
+    --user-pool-id "$POOL" --username "$EMAIL" --message-action SUPPRESS \
+    --user-attributes Name=email,Value="$EMAIL" Name=email_verified,Value=true Name=name,Value=Administrador
+
+aws cognito-idp admin-set-user-password \
+    --user-pool-id "$POOL" --username "$EMAIL" --password "$CLAVE" --permanent
+
+aws cognito-idp admin-add-user-to-group \
+    --user-pool-id "$POOL" --username "$EMAIL" --group-name admins
+```
+
+### 6. Reproducir las pruebas
+
+```bash
+cd ..
+
+./scripts/test/seed-users.sh 10
+
+./scripts/test/seed.sh "$EMAIL" "$CLAVE" 3 120
+./scripts/test/idempotency-test.sh
+
+./scripts/test/seed.sh "$EMAIL" "$CLAVE" 3 120
+./scripts/test/concurrency-test.sh 8
+```
+
+La salida se guarda en [`docs/evidencias/`](docs/evidencias/). La cuenta limita las ejecuciones simultáneas de Lambda a 10, de ahí las 8 peticiones.
+
+El correo de confirmación de reserva se simula en el log de la notificadora:
+
+```bash
+aws logs tail /aws/lambda/bookslot-dev-notifier --since 10m
+```
+
+### 7. Despliegue automático
+
+`deploy.yml` repite los pasos 3 y 4 en cada push a `main`, sobre un runner autoalojado. Registro desde **Settings → Actions → Runners → New self-hosted runner**, que da la URL del paquete y un token válido durante una hora:
+
+```bash
+mkdir -p ~/actions-runner && cd ~/actions-runner
+
+curl -o actions-runner.tar.gz -L \
+  https://github.com/actions/runner/releases/download/v2.328.0/actions-runner-linux-x64-2.328.0.tar.gz
+tar xzf actions-runner.tar.gz
+
+./config.sh --url https://github.com/ninoecf/bookslot-app --token <TOKEN>
+./run.sh
+```
+
+El job usa las credenciales de AWS de esa máquina.
+
+`ci.yml` corre en runners de GitHub y no accede a AWS: sintaxis de las funciones y de la interfaz, `terraform fmt -check` y `terraform validate`.
 
 ---
 
-## 5. Instrucciones de destrucción
+## 6. Instrucciones de destrucción
 
+```bash
+cd infra
+terraform destroy
+```
+
+34 recursos, unos tres minutos.
+
+### Recursos no gestionados por Terraform
+
+El bucket del estado. Tiene versionado, así que hay que borrar las versiones antes que el bucket:
+
+```bash
+aws s3api delete-objects --bucket bookslot-tfstate --delete "$(
+    aws s3api list-object-versions --bucket bookslot-tfstate --output json \
+        --query '{Objects: Versions[].{Key:Key,VersionId:VersionId}}')"
+
+aws s3api delete-objects --bucket bookslot-tfstate --delete "$(
+    aws s3api list-object-versions --bucket bookslot-tfstate --output json \
+        --query '{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}')" 2>/dev/null || true
+
+aws s3api delete-bucket --bucket bookslot-tfstate --region eu-west-1
+```
+
+Los grupos de logs, que crea Lambda en la primera invocación:
+
+```bash
+aws logs delete-log-group --log-group-name /aws/lambda/bookslot-dev-api
+aws logs delete-log-group --log-group-name /aws/lambda/bookslot-dev-notifier
+```
+
+### Comprobación
+
+```bash
+aws cognito-idp list-user-pools --max-results 10 --query 'UserPools[].Name'
+aws dynamodb list-tables --query 'TableNames'
+aws s3 ls | grep bookslot
+aws logs describe-log-groups --log-group-name-prefix /aws/lambda/bookslot \
+    --query 'logGroups[].logGroupName'
+```
 
 ---
 
-## 6. Coste mensual estimado
+## 7. Coste mensual estimado
 
 Sin nada encendido por horas, el gasto depende del uso. Con el de este proyecto —despliegues, pruebas y una demostración— las líneas quedan así:
 
@@ -176,5 +354,5 @@ Sin nada encendido por horas, el gasto depende del uso. Con el de este proyecto 
 
 Estimación hecha con la [calculadora oficial de AWS](https://calculator.aws/#/estimate?nc2=h_pr_calc&id=2bf144db3d84c40d04d5fe88fdd64ef9471cacd3) sobre un escenario de **50 visitas, 10 reservas y 10 registros al día** : **0,50 $/mes**. El desglose exportado está en [`docs/coste-estimado.json`](docs/coste-estimado.json).
  
-De esos 0,50 $, **0,43 $ son las cuatro alarmas de CloudWatch computadas sin la capa gratuita** —la calculadora avisa de que esa sección la excluye—, y en la práctica las diez primeras alarmas son gratis. La cifra es el techo, no el suelo.
+De esos 0,50 $, **0,43 $ son la línea de CloudWatch computada sin la capa gratuita** —la calculadora avisa de que esa sección la excluye—, y en la práctica las diez primeras alarmas son gratis. La cifra es el techo, no el suelo.
 

@@ -445,6 +445,18 @@ function pantallaRegistro() {
           { Name: 'name',  Value: $('#fullName').value }
         ]
       });
+
+      // El aviso de bienvenida sale de la API, que publica en SNS. La cuenta
+      // ya existe en Cognito, asi que un fallo aqui no la deshace.
+      try {
+        await post('/register', {
+          name: $('#fullName').value,
+          email: $('#email').value
+        });
+      } catch (e) {
+        console.error('No se pudo publicar el aviso de registro:', e.message);
+      }
+
       avisar('Cuenta creada. Revisa tu email para el código.');
       ir('#/confirmar?email=' + encodeURIComponent($('#email').value));
     } catch (e) {

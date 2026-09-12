@@ -19,6 +19,25 @@ resource "aws_cloudwatch_metric_alarm" "api_errors" {
   ok_actions    = [aws_sns_topic.alerts.arn]
 }
 
+# Lambda esta rechazando invocaciones por falta de cupo. Se añade al monitoring.
+resource "aws_cloudwatch_metric_alarm" "api_throttles" {
+  alarm_name        = "${local.name}-api-frenada"
+  alarm_description = "Lambda rechaza invocaciones por limite de concurrencia"
+
+  namespace   = "AWS/Lambda"
+  metric_name = "Throttles"
+  dimensions  = { FunctionName = aws_lambda_function.api.function_name }
+
+  statistic           = "Sum"
+  period              = 300
+  evaluation_periods  = 1
+  threshold           = 0
+  comparison_operator = "GreaterThanThreshold"
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+}
+
 resource "aws_cloudwatch_metric_alarm" "gateway_5xx" {
   alarm_name        = "${local.name}-gateway-5xx"
   alarm_description = "API Gateway devuelve errores de servidor"
