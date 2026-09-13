@@ -241,8 +241,10 @@ Los dos los crea el script de 5.2.1 a partir de sus argumentos. No hay que escri
 Desde la raíz del repositorio:
 
 ```bash
-./scripts/connect-github-aws.sh ninoecf/bookslot-app tu-correo@ejemplo.com
+./scripts/connect-github-aws.sh ninoecf/bookslot-app correo-de-alarmas@ejemplo.com
 ```
+
+El segundo argumento es el buzón de `ALERT_EMAIL`, no tu usuario de AWS ni el de GitHub.
 
 Se lanza una sola vez. En AWS crea el bucket del estado, el proveedor OIDC y el rol que asume el workflow; en GitHub guarda los secretos `AWS_DEPLOY_ROLE_ARN` y `ALERT_EMAIL`.
 
@@ -252,7 +254,7 @@ La *trust policy* del rol queda atada a `repo:<owner/repo>:ref:refs/heads/main`.
 
 Desde **Actions → Deploy → Run workflow**, o haciendo cualquier push a `main`.
 
-Al terminar, el resumen del job trae la URL de la aplicación y la de la API.
+Al terminar, el resumen del job trae la URL de la aplicación y la de la API. Y llega un correo de AWS pidiendo confirmar la suscripción a las alarmas: hay que pulsar el enlace, o las alarmas saltarán sin avisar a nadie.
 
 La aplicación queda en pie sin ningún administrador. Lo crea 6.1.
 
