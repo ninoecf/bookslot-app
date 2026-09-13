@@ -32,6 +32,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Ver claims del token
+        run: |
+          TOKEN=$(curl -sH "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r .value)
+          P=$(echo "$TOKEN" | cut -d. -f2)
+          P="$P$(printf '=%.0s' $(seq $(( (4 - ${#P} % 4) % 4 ))))"
+          echo "$P" | tr '_-' '/+' | base64 -d | jq '{sub, aud, repository, ref, event_name}'
+
       - name: Credenciales de AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
