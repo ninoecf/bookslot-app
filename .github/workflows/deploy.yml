@@ -28,9 +28,10 @@ jobs:
   deploy:
     name: Desplegar
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Ver claims del token
         run: |
