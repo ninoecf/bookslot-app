@@ -137,7 +137,7 @@ Se comprueba a dos alturas:
  
 **HTTPS.** Los dos puntos expuestos, CloudFront y el endpoint de API Gateway, solo aceptan HTTPS. El *bucket* no es accesible directamente: solo CloudFront, por OAC.
  
-**CI/CD.** `ci.yml` corre en cada push y pull request las pruebas de la función, `terraform fmt -check`, `terraform validate` y la sintaxis de la interfaz, **sin ningún acceso a AWS**. `deploy.yml` despliega en push a `main` autenticándose por **OIDC**, sin ninguna clave guardada en el repositorio: `terraform apply`, generar `config.js` con los *outputs*, subir la interfaz e invalidar la caché.
+**CI/CD.** `pipeline.yml` encadena cuatro *jobs*. Los tres primeros —funciones, infraestructura e interfaz— comprueban sintaxis, `terraform fmt -check` y `terraform validate`, corren también en cada pull request y **no acceden a AWS**. El cuarto, `Desplegar`, declara `needs` sobre los tres: si alguno falla, no llega a ejecutarse. Solo corre en push a `main`, es el único con permiso `id-token`, y se autentica por **OIDC** sin ninguna clave guardada en el repositorio.
  
 **Alarmas.** Las alarmas se publican en un topic de SNS **suscrito a un correo**. Se evalúan los errores de la función, sus frenadas por límite de concurrencia y los 5xx del gateway.
  
@@ -227,7 +227,7 @@ aws cloudfront create-invalidation \
 
 ### 5.2 Despliegue automático
 
-`deploy.yml` repite 5.1.3 y 5.1.4 en cada push a `main`, autenticándose por **OIDC** con credenciales temporales. No hay ninguna clave de AWS en el repositorio.
+El *job* `Desplegar` de `pipeline.yml` repite 5.1.3 y 5.1.4 en cada push a `main`, autenticándose por **OIDC** con credenciales temporales. No hay ninguna clave de AWS en el repositorio. Antes tienen que pasar los tres *jobs* de verificación: un fallo de sintaxis o de `terraform validate` detiene el despliegue.
 
 Por esta rama no hay `terraform.tfvars`: el workflow lee del repositorio dos secretos, y el correo de las alarmas viaja en el segundo.
 
@@ -262,7 +262,7 @@ Al terminar, el resumen del job trae la URL de la aplicación y la de la API. Y 
 
 La aplicación queda en pie sin ningún administrador. Lo crea 6.1.
 
-`ci.yml` es independiente y no toca AWS: corre en runners de GitHub la sintaxis de las funciones y de la interfaz, `terraform fmt -check` y `terraform validate` con `-backend=false`.
+Los tres *jobs* de verificación corren igual en los pull requests, donde `Desplegar` queda descartado por su condición: un pull request desde un *fork* no llega a pedir el token de OIDC.
 
 ---
 

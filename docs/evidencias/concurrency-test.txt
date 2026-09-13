@@ -1,6 +1,6 @@
-Prueba de concurrencia - 2026-09-12T15:57:32Z
-API:         https://28sivhtw8d.execute-api.eu-west-1.amazonaws.com
-Franja:      aa5073f7-85dd-422c-8773-66db8c62dcc8
+Prueba de concurrencia - 2026-09-13T10:05:05Z
+API:         https://zzdk0qj7a3.execute-api.eu-west-1.amazonaws.com
+Franja:      27396d41-d167-4fa1-ab75-ed56743662f1
 Aforo:       3
 Peticiones:  8
 
