@@ -44,6 +44,11 @@ fi
 
 # --- 3. El rol que asume el workflow ----------------------------------------
 
+# Los repositorios creados a partir del 15 de julio de 2026 emiten el sub en
+# formato inmutable, con los ids numericos dentro. Los anteriores usan el
+# formato con los nombres. Se aceptan los dos, cada uno completo.
+IDS=$(gh api "repos/$REPO" --jq '"\(.owner.login)@\(.owner.id)/\(.name)@\(.id)"')
+
 # La condicion sobre sub ata el rol a una rama. Sin ella, cualquier rama y
 # cualquier pull request de un fork podrian desplegar.
 cat > /tmp/bookslot-trust.json <<JSON
@@ -56,7 +61,10 @@ cat > /tmp/bookslot-trust.json <<JSON
     "Condition": {
       "StringEquals": {
         "$EMISOR:aud": "sts.amazonaws.com",
-        "$EMISOR:sub": "repo:$REPO:ref:refs/heads/$RAMA"
+        "$EMISOR:sub": [
+          "repo:$REPO:ref:refs/heads/$RAMA",
+          "repo:$IDS:ref:refs/heads/$RAMA"
+        ]
       }
     }
   }]
@@ -116,4 +124,5 @@ gh secret set ALERT_EMAIL --repo "$REPO" --body "$CORREO"
 echo
 echo "Rol:  $ARN"
 echo "Rama autorizada a desplegar: $RAMA"
+echo "Sujetos aceptados: repo:$REPO y repo:$IDS"
 echo "Ya puedes lanzar el workflow Deploy."

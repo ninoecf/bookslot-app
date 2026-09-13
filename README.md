@@ -147,11 +147,11 @@ Se comprueba a dos alturas:
 
 ## 5. Despliegue
 
-### 5.1 Despliegue manual
+### 5.0 Preparación
 
-#### 5.1.1 Preparación
+Común a las dos ramas: los scripts de 5.1 y de 5.2 viven en el repositorio.
 
-**Requisitos:** AWS CLI v2, Terraform ≥ 1.10 y credenciales de AWS con permisos sobre la cuenta.
+**Requisitos:** AWS CLI v2 y credenciales de AWS con permisos sobre la cuenta.
 
 ```bash
 git clone https://github.com/ninoecf/bookslot-app.git
@@ -166,9 +166,13 @@ aws sts get-caller-identity
 aws configure get region
 ```
 
-Todos los comandos parten de la raíz del repositorio y se ejecutan en la misma terminal.
+Esto es necesario tanto para el despliegue manual 5.1, como el automático 5.2, puesto que es necesario ejecutar el script que enlaza el repositorio github con AWS mediante OIDC.
 
-#### 5.1.2 El bucket del estado
+### 5.1 Despliegue manual
+
+**Requisitos añadidos:** Terraform ≥ 1.10.
+
+#### 5.1.1 El bucket del estado
 
 ```bash
 BUCKET="bookslot-tfstate-$(aws sts get-caller-identity --query Account --output text)"
@@ -176,9 +180,9 @@ BUCKET="bookslot-tfstate-$(aws sts get-caller-identity --query Account --output 
 ./scripts/create-bucket-4-tfstate.sh "$BUCKET" eu-west-1
 ```
 
-`$BUCKET` se vuelve a usar en 5.1.4 y en la sección 7.
+`$BUCKET` se vuelve a usar en 5.1.3 y en la sección 7.
 
-#### 5.1.3 Las variables
+#### 5.1.2 Las variables
 
 ```bash
 cd infra
@@ -187,7 +191,7 @@ cp example.tfvars terraform.tfvars
 
 Edita `terraform.tfvars` y pon tu dirección en `alert_email`. Ahí llegarán las alarmas y los avisos de presupuesto.
 
-#### 5.1.4 Levantar la infraestructura
+#### 5.1.3 Levantar la infraestructura
 
 ```bash
 terraform init -backend-config="bucket=$BUCKET"
@@ -196,7 +200,7 @@ terraform apply
 
 Son 38 recursos y tarda unos minutos. Al terminar, confirma la suscripción a las alarmas desde el correo que envía AWS.
 
-#### 5.1.5 Publicar la interfaz
+#### 5.1.4 Publicar la interfaz
 
 ```bash
 cat > ../web/config.js <<EOF
@@ -223,7 +227,7 @@ aws cloudfront create-invalidation \
 
 ### 5.2 Despliegue automático
 
-`deploy.yml` repite 5.1.4 y 5.1.5 en cada push a `main`, autenticándose por **OIDC** con credenciales temporales. No hay ninguna clave de AWS en el repositorio.
+`deploy.yml` repite 5.1.3 y 5.1.4 en cada push a `main`, autenticándose por **OIDC** con credenciales temporales. No hay ninguna clave de AWS en el repositorio.
 
 Por esta rama no hay `terraform.tfvars`: el workflow lee del repositorio dos secretos, y el correo de las alarmas viaja en el segundo.
 
@@ -248,7 +252,7 @@ El segundo argumento es el buzón de `ALERT_EMAIL`, no tu usuario de AWS ni el d
 
 Se lanza una sola vez. En AWS crea el bucket del estado, el proveedor OIDC y el rol que asume el workflow; en GitHub guarda los secretos `AWS_DEPLOY_ROLE_ARN` y `ALERT_EMAIL`.
 
-La *trust policy* del rol queda atada a `repo:<owner/repo>:ref:refs/heads/main`.
+La *trust policy* del rol queda atada al repositorio y a la rama `main`nadie más puede asumirlo.
 
 #### 5.2.2 Lanzar el workflow
 

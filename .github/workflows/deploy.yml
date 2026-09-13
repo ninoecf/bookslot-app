@@ -42,7 +42,7 @@ jobs:
           echo "$P" | tr '_-' '/+' | base64 -d | jq '{sub, aud, repository, ref, event_name}'
 
       - name: Credenciales de AWS
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
