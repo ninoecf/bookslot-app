@@ -251,8 +251,37 @@ jobs:
           ./scripts/test/concurrency-test.sh 8
 
       - name: Guardar las evidencias
+        id: evidencias
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: evidencias-${{ github.run_id }}
           path: docs/evidencias/
+
+      # if: always() tambien aqui: si una prueba falla es cuando mas interesa
+      # ver el recuento en el resumen.
+      - name: Resumen de las pruebas
+        if: always()
+        run: |
+          {
+            echo "## Pruebas"
+            echo
+
+            if [ -f docs/evidencias/concurrency-test.txt ]; then
+              echo "### Concurrencia"
+              echo '```'
+              cat docs/evidencias/concurrency-test.txt
+              echo '```'
+            fi
+
+            if [ -f docs/evidencias/idempotency-test.txt ]; then
+              echo "### Idempotencia"
+              echo '```'
+              head -5 docs/evidencias/idempotency-test.txt
+              echo "  ..."
+              tail -6 docs/evidencias/idempotency-test.txt
+              echo '```'
+            fi
+
+            echo "[Evidencias completas](${{ steps.evidencias.outputs.artifact-url }})"
+          } >> "$GITHUB_STEP_SUMMARY"
