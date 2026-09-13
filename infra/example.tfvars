@@ -5,4 +5,4 @@
 alert_email = "tu-correo@example.com"
 
 # Perfil de AWS CLI
-# aws_profile = "academy"
+# aws_profile = "myaccount"

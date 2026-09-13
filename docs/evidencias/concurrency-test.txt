@@ -1,0 +1,16 @@
+Prueba de concurrencia - 2026-09-12T15:57:32Z
+API:         https://28sivhtw8d.execute-api.eu-west-1.amazonaws.com
+Franja:      aa5073f7-85dd-422c-8773-66db8c62dcc8
+Aforo:       3
+Peticiones:  8
+
+Respuestas:
+      3 201 -
+      5 409 SLOT_SOLD_OUT
+
+Confirmadas:          3
+Rechazadas por aforo: 5
+Plazas libres ahora:  0
+
+OK - sin overbooking: 3 de 8 peticiones simultaneas obtuvieron
+plaza, que es exactamente el aforo.

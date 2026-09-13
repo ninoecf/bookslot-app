@@ -194,7 +194,7 @@ terraform init -backend-config="bucket=$BUCKET"
 terraform apply
 ```
 
-Son 34 recursos y tarda unos minutos. Al terminar, confirma la suscripción a las alarmas desde el correo que envía AWS.
+Son 38 recursos y tarda unos minutos. Al terminar, confirma la suscripción a las alarmas desde el correo que envía AWS.
 
 #### 5.1.5 Publicar la interfaz
 
@@ -225,9 +225,20 @@ aws cloudfront create-invalidation \
 
 `deploy.yml` repite 5.1.4 y 5.1.5 en cada push a `main`, autenticándose por **OIDC** con credenciales temporales. No hay ninguna clave de AWS en el repositorio.
 
+Por esta rama no hay `terraform.tfvars`: el workflow lee del repositorio dos secretos, y el correo de las alarmas viaja en el segundo.
+
+| Secreto | Contenido |
+|---|---|
+| `AWS_DEPLOY_ROLE_ARN` | ARN del rol que el workflow asume en AWS |
+| `ALERT_EMAIL` | Buzón que recibe las alarmas y los avisos de presupuesto |
+
+Los dos los crea el script de 5.2.1 a partir de sus argumentos. No hay que escribirlos a mano en Settings.
+
 #### 5.2.1 Conectar GitHub con AWS
 
 **Requisitos:** AWS CLI v2 con credenciales que tengan permisos de IAM, y la CLI de GitHub (`gh`) autenticada con `gh auth login`.
+
+Desde la raíz del repositorio:
 
 ```bash
 ./scripts/connect-github-aws.sh ninoecf/bookslot-app tu-correo@ejemplo.com
@@ -300,12 +311,12 @@ Las dos van contra el despliegue real y usan el administrador de 6.1. Desde la r
 ./scripts/test/idempotency-test.sh
 
 ./scripts/test/seed.sh "$EMAIL" "$CLAVE" 3 120
-./scripts/test/concurrency-test.sh 30
+./scripts/test/concurrency-test.sh 8
 ```
 
-Treinta peticiones simultáneas sobre una franja de tres plazas. La salida se guarda en [`docs/evidencias/`](docs/evidencias/).
+Ocho peticiones simultáneas sobre una franja de tres plazas. La salida se guarda en [`docs/evidencias/`](docs/evidencias/).
 
-Si el cupo de ejecuciones simultáneas de Lambda de la cuenta está por debajo de esa cifra, el script avisa: por encima del cupo, API Gateway devuelve `503` sin que la transacción llegue a verlas.
+El número de peticiones lo limita el cupo de ejecuciones simultáneas de Lambda de la cuenta, que en una cuenta nueva son 10: por encima de ese cupo, API Gateway devuelve `503` sin que la transacción llegue a verlas. El script lo comprueba y para si te pasas.
 
 El correo de confirmación de reserva se simula en el log de la notificadora:
 
@@ -322,7 +333,7 @@ cd infra
 terraform destroy
 ```
 
-34 recursos, unos tres minutos.
+38 recursos, unos tres minutos.
 
 ### Recursos no gestionados por Terraform
 

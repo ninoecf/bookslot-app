@@ -1,0 +1,85 @@
+# Verificacion en cada push y en cada pull request. No accede a AWS: no pide
+# token OIDC ni asume ningun rol.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: Las funciones
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # La misma mayor que el runtime de las Lambdas.
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      # No hay package.json: el SDK de AWS lo trae el runtime de Lambda.
+      - name: Sintaxis de las funciones
+        run: |
+          for f in functions/*/index.mjs; do
+            node --check "$f"
+            echo "OK  $f"
+          done
+
+  infra:
+    name: Infraestructura
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.10.5'
+
+      - name: Formato
+        run: terraform fmt -check -recursive infra/
+
+      # -backend=false valida sin credenciales y sin leer el estado remoto.
+      - name: Validar
+        working-directory: infra
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+  web:
+    name: La interfaz
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Sintaxis de la interfaz
+        run: |
+          for f in web/*.js; do
+            echo "· $f"
+            node --check "$f"
+          done
+
+      # config.js lo genera el despliegue con los outputs de Terraform.
+      - name: config.js no está en el repositorio
+        run: |
+          if [ -f web/config.js ]; then
+            echo "ERROR: web/config.js está en el repositorio y debería generarlo el despliegue."
+            exit 1
+          fi

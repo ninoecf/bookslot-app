@@ -28,11 +28,21 @@ if [ "$LIBRES" != "$AFORO" ]; then
     exit 1
 fi
 
-# La cuenta limita las ejecuciones simultaneas de Lambda. Por encima, API
-# Gateway devuelve 503 sin llegar a invocar la funcion.
+# Cada peticion usa un usuario distinto, asi que hacen falta N tokens.
+TOKENS=$(wc -l < "$SALIDA_DIR/tokens.txt")
+if [ "$TOKENS" -lt "$N" ]; then
+    echo "Hay $TOKENS tokens y pides $N peticiones. Lanza ./seed-users.sh $N"
+    exit 1
+fi
+
+# Por encima del cupo de la cuenta, Lambda rechaza las invocaciones y API
+# Gateway devuelve 503 sin que la transaccion llegue a verlas: la prueba deja
+# de medir el aforo.
 CUPO=$(aws lambda get-account-settings --query 'AccountLimit.ConcurrentExecutions' --output text)
-if [ "$N" -gt "$CUPO" ]; then
-    echo "AVISO: pides $N peticiones y la cuenta permite $CUPO simultaneas."
+if [ "$N" -ge "$CUPO" ]; then
+    echo "Pides $N peticiones y la cuenta permite $CUPO ejecuciones simultaneas."
+    echo "Lanza la prueba con menos de $CUPO."
+    exit 1
 fi
 
 {
