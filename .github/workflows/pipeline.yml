@@ -1,9 +1,8 @@
-# Verificacion y despliegue en un solo workflow, para que el despliegue dependa
-# de que las comprobaciones pasen. `needs` es lo que encadena los jobs y lo que
-# GitHub dibuja como grafo en la pestaña Actions.
+# Verificacion, despliegue y pruebas en un solo workflow. `needs` es lo que
+# encadena los jobs y lo que GitHub dibuja como grafo en la pestaña Actions.
 #
-# Los tres primeros jobs no acceden a AWS y corren tambien en pull requests.
-# Desplegar solo ocurre en push a main, y es el unico job con id-token.
+# Los tres primeros no acceden a AWS y corren tambien en pull requests.
+# Desplegar y Pruebas solo ocurren en push a main.
 name: Pipeline
 
 on:
@@ -177,3 +176,83 @@ jobs:
         run: |
           echo "Aplicacion: ${{ steps.tf.outputs.web_url }}" >> "$GITHUB_STEP_SUMMARY"
           echo "API: ${{ steps.tf.outputs.api_invoke_url }}" >> "$GITHUB_STEP_SUMMARY"
+
+  pruebas:
+    name: Pruebas
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      id-token: write
+      contents: read
+
+    concurrency:
+      group: pruebas
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Credenciales de AWS
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: bookslot-pruebas-${{ github.run_id }}
+
+      - uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: '1.10.5'
+          terraform_wrapper: false
+
+      # scripts/env.sh lee los outputs de Terraform, asi que este job necesita
+      # su propio init: corre en una maquina distinta a la del despliegue.
+      - name: Estado de Terraform
+        working-directory: infra
+        run: |
+          CUENTA=$(aws sts get-caller-identity --query Account --output text)
+          terraform init -input=false \
+              -backend-config="bucket=bookslot-tfstate-$CUENTA"
+
+      # El administrador y las pruebas van en el MISMO paso a proposito: la
+      # contrasena se genera al vuelo y se queda en una variable de shell. Si
+      # cruzara a otro paso tendria que pasar por env, y GitHub imprime el
+      # bloque env en el log.
+      - name: Idempotencia y concurrencia
+        run: |
+          chmod +x scripts/*.sh scripts/test/*.sh
+
+          # uuidgen esta en uuid-runtime, que no siempre viene en la imagen.
+          command -v uuidgen >/dev/null || sudo apt-get install -y -qq uuid-runtime
+
+          POOL=$(terraform -chdir=infra output -raw cognito_user_pool_id)
+          EMAIL="pipeline-admin@example.com"
+          CLAVE="$(openssl rand -base64 18)Aa1"
+
+          aws cognito-idp admin-create-user \
+              --user-pool-id "$POOL" --username "$EMAIL" --message-action SUPPRESS \
+              --user-attributes Name=email,Value="$EMAIL" Name=email_verified,Value=true Name=name,Value=Pipeline \
+              >/dev/null 2>&1 || true
+
+          aws cognito-idp admin-set-user-password \
+              --user-pool-id "$POOL" --username "$EMAIL" --password "$CLAVE" --permanent
+
+          aws cognito-idp admin-add-user-to-group \
+              --user-pool-id "$POOL" --username "$EMAIL" --group-name admins
+
+          # Cada prueba necesita una franja sin reservas, de ahi los dos seed.sh.
+          ./scripts/test/seed-users.sh 10
+
+          ./scripts/test/seed.sh "$EMAIL" "$CLAVE" 3 120
+          ./scripts/test/idempotency-test.sh
+
+          ./scripts/test/seed.sh "$EMAIL" "$CLAVE" 3 120
+          ./scripts/test/concurrency-test.sh 8
+
+      - name: Guardar las evidencias
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: evidencias-${{ github.run_id }}
+          path: docs/evidencias/

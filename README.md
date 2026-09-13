@@ -137,7 +137,7 @@ Se comprueba a dos alturas:
  
 **HTTPS.** Los dos puntos expuestos, CloudFront y el endpoint de API Gateway, solo aceptan HTTPS. El *bucket* no es accesible directamente: solo CloudFront, por OAC.
  
-**CI/CD.** `pipeline.yml` encadena cuatro *jobs*. Los tres primeros —funciones, infraestructura e interfaz— comprueban sintaxis, `terraform fmt -check` y `terraform validate`, corren también en cada pull request y **no acceden a AWS**. El cuarto, `Desplegar`, declara `needs` sobre los tres: si alguno falla, no llega a ejecutarse. Solo corre en push a `main`, es el único con permiso `id-token`, y se autentica por **OIDC** sin ninguna clave guardada en el repositorio.
+**CI/CD.** `pipeline.yml` encadena cinco *jobs*. Los tres primeros —funciones, infraestructura e interfaz— comprueban sintaxis, `terraform fmt -check` y `terraform validate`, corren también en cada pull request y **no acceden a AWS**. El cuarto, `Desplegar`, declara `needs` sobre los tres: si alguno falla, no llega a ejecutarse. Solo corre en push a `main` —un pull request desde un *fork* nunca llega a obtener credenciales— y se autentica por **OIDC**, sin ninguna clave guardada en el repositorio. El quinto, `Pruebas`, lanza la idempotencia y la concurrencia contra lo que se acaba de desplegar y sube la salida como artefacto de la ejecución.
  
 **Alarmas.** Las alarmas se publican en un topic de SNS **suscrito a un correo**. Se evalúan los errores de la función, sus frenadas por límite de concurrencia y los 5xx del gateway.
  
@@ -256,13 +256,13 @@ La *trust policy* del rol queda atada al repositorio y a la rama `main`nadie má
 
 #### 5.2.2 Lanzar el workflow
 
-Desde **Actions → Deploy → Run workflow**, o haciendo cualquier push a `main`.
+Desde **Actions → Pipeline → Run workflow**, o haciendo cualquier push a `main`.
 
-Al terminar, el resumen del job trae la URL de la aplicación y la de la API. Y llega un correo de AWS pidiendo confirmar la suscripción a las alarmas: hay que pulsar el enlace, o las alarmas saltarán sin avisar a nadie.
+Al terminar, el resumen del job trae la URL de la aplicación y la de la API, y la salida de las pruebas queda como artefacto descargable de la ejecución.
 
-La aplicación queda en pie sin ningún administrador. Lo crea 6.1.
+Llega también un correo de AWS pidiendo confirmar la suscripción a las alarmas. Hay que pulsar el enlace, o las alarmas saltarán sin avisar a nadie.
 
-Los tres *jobs* de verificación corren igual en los pull requests, donde `Desplegar` queda descartado por su condición: un pull request desde un *fork* no llega a pedir el token de OIDC.
+La aplicación queda en pie sin ningún administrador puesto que el que se crea durante las pruebas es efímero y se borra durante las mismas.
 
 ---
 
@@ -291,7 +291,8 @@ POOL=$(aws cognito-idp list-user-pools --max-results 60 \
     --query "UserPools[?Name=='bookslot-dev'].Id | [0]" --output text)
 
 EMAIL="admin@ejemplo.com"
-CLAVE="BookSlot2026"
+CLAVE=$(openssl rand -base64 18)Aa1
+echo "$CLAVE"
 
 aws cognito-idp admin-create-user \
     --user-pool-id "$POOL" --username "$EMAIL" --message-action SUPPRESS \
@@ -304,7 +305,7 @@ aws cognito-idp admin-add-user-to-group \
     --user-pool-id "$POOL" --username "$EMAIL" --group-name admins
 ```
 
-Con ese correo y esa contraseña ya se puede entrar en la aplicación, y aparece el menú **Admin**.
+La contraseña se genera al vuelo y el `echo` la imprime una vez: apúntala. Con ella y ese correo ya se puede entrar en la aplicación, y aparece el menú **Admin**.
 
 ### 6.2 Reproducir las pruebas
 
